@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="LoginMapper">
+	
+	<select id="selectUser" parameterType="UserVO" resultType="UserVO">
+		SELECT 
+			m.member_no AS userNo, member_id AS userId, password AS userPw, member_name AS userName, role_name AS roleName, mng.mng_no AS mngNo
+		FROM
+			MEMBER m
+		LEFT JOIN MANAGER mng
+			ON	m.member_no = mng.member_no
+		WHERE
+			member_id = #{userId} 
+		AND m.state = 'Y'
+	</select>
+
+</mapper>

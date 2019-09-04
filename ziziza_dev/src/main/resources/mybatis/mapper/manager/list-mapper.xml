@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="CompanyListMngMapper">
+	<!-- 사업장 리스트 -->
+	<select id="selectCompanyList" parameterType="kr.co.ziziza.manager.company.MngRegistVO" resultType="kr.co.ziziza.manager.company.MngRegistVO" >
+		SELECT 
+			company_no AS companyNo, company_name AS companyName, regist_date AS registDate, state
+		FROM 
+			COMPANY
+		WHERE
+			mng_no = ${mngNo}
+	</select>
+	
+	<select id="selectDetail" parameterType="kr.co.ziziza.manager.company.MngRegistVO" resultType="kr.co.ziziza.manager.company.MngRegistVO" >
+		SELECT 
+			company_no AS companyNo, company_kind AS companyKind, company_name AS companyName, address, company_tel AS companyTel, contents, open_time AS openTime, close_time AS closeTime
+		FROM 
+			COMPANY
+		WHERE 
+			company_no = ${companyNo}
+	</select>
+	
+	<select id="selectDetailCharge" parameterType="kr.co.ziziza.manager.company.MngRegistVO" resultType="kr.co.ziziza.manager.company.MngRegistVO" >
+		SELECT 
+			a.company_no AS companyNo, a.time_kind AS companyKind, a.subject, a.price, b.plant_name AS plantName
+		FROM 
+			CHARGE as a, PLANTS as b
+		WHERE 
+			a.company_no = ${companyNo}
+			and b.company_no = ${companyNo}
+	</select>
+
+	<insert id="companyInsert" parameterType="kr.co.ziziza.manager.company.MngRegistVO">
+		INSERT INTO COMPANY 
+			(company_name, company_kind, company_tel, open_time, close_time, address, contents, regist_date, state, mng_no)
+		VALUES 
+			(#{companyName}, #{companyKind}, #{companyTel}, #{openTime}, #{closeTime}, #{address}, #{contents}, now(), 'N', #{mngNo})
+		<selectKey resultType="Integer" keyProperty="companyNo" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>	
+	</insert>
+	
+	<insert id="companyCharge" parameterType="kr.co.ziziza.manager.company.MngRegistVO">
+		INSERT INTO CHARGE
+			(company_no, time_kind, subject, price)
+		VALUES 
+			(#{companyNo}, #{timeKind}, #{subject}, #{price})
+	</insert>
+	
+	<insert id="companyPlant" parameterType="kr.co.ziziza.manager.company.MngRegistVO">
+		INSERT INTO PLANTS
+			(company_no, plant_name)
+		VALUES 
+			(#{companyNo}, #{plantName})
+	</insert>
+	
+	<delete id="companyDelete" parameterType="kr.co.ziziza.manager.company.MngRegistVO">
+		DELETE FROM
+			COMPANY
+		WHERE
+			company_no = #{companyNo}
+	</delete>
+	
+	<delete id="chargeDelete" parameterType="kr.co.ziziza.manager.company.MngRegistVO">
+		DELETE FROM
+			CHARGE
+		WHERE
+			company_no = #{companyNo}
+	</delete>
+	
+	<delete id="plantsDelete" parameterType="kr.co.ziziza.manager.company.MngRegistVO">
+		DELETE FROM
+			PLANTS
+		WHERE
+			company_no = #{companyNo}
+	</delete>
+	
+	<update id="companyUpdate" parameterType="kr.co.ziziza.manager.company.MngRegistVO">
+		UPDATE COMPANY
+		SET
+			company_name = #{companyName}, company_kind = #{companyKind}, company_tel = #{companyTel}, open_time = #{openTime}, close_time = #{closeTime},
+			address = #{address}, contents = #{contents}, regist_date = now(), state= 'N', mng_no = #{mngNo}
+		WHERE
+			company_no = #{companyNo}
+	</update>
+	
+	<update id="chargeUpdate" parameterType="kr.co.ziziza.manager.company.MngRegistVO">
+		UPDATE CHARGE
+		SET
+			company_no = #{companyNo}, time_kind = #{timeKind}, subject = #{subject}, price = #{price}
+		WHERE
+			company_no = #{companyNo}
+	</update>
+	
+	<update id="plantUpdate" parameterType="kr.co.ziziza.manager.company.MngRegistVO">
+		UPDATE PLANTS
+		SET
+			company_no = #{companyNo}, plant_name = #{plantName}
+		WHERE
+			company_no = #{companyNo}
+	</update>
+</mapper>

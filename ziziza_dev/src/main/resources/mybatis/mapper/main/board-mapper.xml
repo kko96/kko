@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="MainMapper">
+<select id="boardlist"
+			resultType="BoardVO">
+			SELECT 
+			board_no, title, member_no, regist_date
+			, hit
+			FROM
+				BOARD
+			Where board_code = 'COMMUNITY'
+</select>
+
+<insert id="boardInsert" parameterType="BoardVO">
+	INSERT INTO BOARD
+	 (board_code, title, contents, regist_date, state, member_no)
+	VALUES
+	 ('COMMUNITY', #{title}, #{contents}, NOW(), 'Y', 1)
+		
+</insert>
+
+<select id="boardetaild" parameterType="BoardVO" resultType="BoardVO">
+	SELECT
+	b.board_no, b.board_code, b.title, b.contents, b.member_no, b.regist_date, b.modify_date, b.hit, b.state
+	FROM BOARD b
+		WHERE b.board_no = #{board_no}
+</select>
+
+<delete id="boardDelete" parameterType="BoardVO">
+	DELETE FROM BOARD WHERE board_no = #{board_no}
+</delete>
+
+<update id="boardupdate" parameterType="BoardVO">
+	UPDATE BOARD
+			set   title = #{title}
+				, contents = #{contents}
+				WHERE board_no = #{board_no}
+</update>
+
+<select id="boardreplylist" parameterType="BoardVO" resultType="ReplyVO">
+	SELECT r.comment_no, r.contents, r.regist_date, r.state
+	, r.board_no, m.member_no
+	FROM COMMENT r, MEMBER m
+	where board_no = #{board_no}
+		and r.member_no = m.member_no
+			ORDER BY r.comment_no
+</select>
+
+<insert id="insertReply" parameterType="ReplyVO">
+	INSERT INTO COMMENT 
+		(board_no, contents, regist_date, member_no, state)
+	VALUES
+		(#{board_no}, #{contents}, NOW(), #{member_no}, 'Y')
+	<selectKey resultType="Integer" keyProperty="comment_no" order="AFTER">
+        SELECT LAST_INSERT_ID()
+    </selectKey>
+</insert>
+
+<select id="ReplyDetail" parameterType="ReplyVO" resultType="ReplyVO">
+	SELECT r.comment_no, r.contents, r.regist_date, r.state
+	, r.board_no, m.member_no
+		FROM COMMENT r, MEMBER m
+			where r.comment_no = #{comment_no}
+			and r.member_no = m.member_no
+</select>
+
+	<delete id="deleteBoardReply" parameterType="ReplyVO">
+		delete from COMMENT where comment_no = #{comment_no}
+	</delete>
+
+</mapper>

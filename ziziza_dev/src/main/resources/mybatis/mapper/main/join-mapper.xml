@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="JoinMapper">
+
+	<select id="joinIDChk"
+			parameterType="java.lang.String"
+			resultType="int">
+		select count(*) from MEMBER where member_id=#{memberId}
+	</select>
+	
+	<insert id="joinIns" parameterType="MemberVO">
+		INSERT INTO MEMBER 
+			(member_id, password, member_name, phone, email, join_date, state, role_name)
+		VALUES 
+			(#{memberId}, #{password}, #{memberName}, #{phone}, #{email}, NOW(), 'Y', 'USER')
+		<selectKey resultType="Integer" keyProperty="memberNo" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+	</insert>
+
+</mapper>

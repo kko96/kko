@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="EventMapper">
+<select id="eventlist"
+			resultType="kr.co.ziziza.main.board.BoardVO">
+			SELECT 
+			board_no, board_code, contents, title, member_no, regist_date
+			, hit, state, modify_no, e_start_date, e_end_date
+			FROM
+				BOARD
+			Where board_code = 'EVENT'
+</select>
+
+<select id="eventdetail" parameterType="kr.co.ziziza.main.board.BoardVO" resultType="kr.co.ziziza.main.board.BoardVO">
+	SELECT
+	n.board_no, n.title, n.member_no, n.contents
+	FROM BOARD n
+		WHERE n.board_no = #{board_no}
+</select>
+
+
+</mapper>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="CompanyMapper">
+<select id="companylist"
+			resultType="kr.co.ziziza.manager.company.MngRegistVO">
+			SELECT 
+			company_no, company_kind, company_name, address, company_tel
+			, contents, open_time, close_time, regist_date, state
+			FROM
+				COMPANY
+</select>
+
+<select id="companydetail" parameterType="kr.co.ziziza.manager.company.MngRegistVO" resultType="kr.co.ziziza.manager.company.MngRegistVO">
+	SELECT 
+			company_no, company_kind, company_name, address, company_tel
+			, contents, open_time, close_time, regist_date, state
+			FROM
+				COMPANY 
+		WHERE company_no = #{company_no}
+</select>
+
+<select id="companyreplylist" parameterType="kr.co.ziziza.manager.company.MngRegistVO" resultType="kr.co.ziziza.main.company.ReviewVO">
+	SELECT r.review_no, r.contents, r.score, r.regist_date
+	, r.company_no, m.member_no
+	FROM REVIEW r, MEMBER m
+	where company_no = #{company_no}
+		and r.member_no = m.member_no
+			ORDER BY r.review_no
+</select>
+
+<insert id="companyinsertReply" parameterType="kr.co.ziziza.main.company.ReviewVO">
+	INSERT INTO REVIEW 
+		(company_no, contents, regist_date, member_no, score, state)
+	VALUES
+		(#{company_no}, #{contents}, NOW(), #{member_no}, #{score}, 'Y')
+	<selectKey resultType="Integer" keyProperty="review_no" order="AFTER">
+        SELECT LAST_INSERT_ID()
+    </selectKey>
+</insert>
+
+<select id="companyReplyDetail" parameterType="kr.co.ziziza.main.company.ReviewVO" resultType="kr.co.ziziza.main.company.ReviewVO">
+	SELECT r.review_no, r.contents, r.regist_date, r.state
+	, r.company_no, m.member_no	
+		FROM REVIEW r, MEMBER m
+			where r.review_no = #{review_no}
+			and r.member_no = m.member_no
+</select>
+
+
+</mapper>
